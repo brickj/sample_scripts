@@ -1,6 +1,6 @@
 import requests
 
-response = requests.get('http://localhost:9102/getIndexStatement', auth=('admin', 'password'))
+response = requests.get('http://localhost:9102/getIndexStatement', auth=('<USERNAME>', '<PASSWORD>'))
 path = '/Users/rickjacobs/Downloads/indexes_FINAL.txt'
 text_file = open(path, "w")
 
