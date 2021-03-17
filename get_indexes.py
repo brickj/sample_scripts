@@ -1,7 +1,7 @@
 import requests
 
 response = requests.get('http://localhost:9102/getIndexStatement', auth=('<USERNAME>', '<PASSWORD>'))
-path = '/Users/rickjacobs/Downloads/indexes_FINAL.txt'
+path = '<PATH_TO_SAVE_FILE.txt>'
 text_file = open(path, "w")
 
 for i in range(len(response.json())):
