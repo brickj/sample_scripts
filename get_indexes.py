@@ -8,12 +8,10 @@ list_of_buckets = []
 
 for node in list_of_nodes:
 
-    response = requests.get('http://' + node + '/getIndexStatement', auth=('<USERNAME>', '<PASSWORD>'))
+    response = requests.get('http://' + node + '/getIndexStatement', auth=('admin', 'password'))
 
-    path = '<PATH_TO_SAVE_FILE.txt>'
+    path = '/Users/rickjacobs/Downloads/indexes.txt'
     text_file = open(path, "w")
-
-    print(response.json())
 
     for i in range(len(response.json())):
         line = response.json()[i]
@@ -29,7 +27,6 @@ for node in list_of_nodes:
             "`", "")
 
         if not bucket in list_of_buckets:
-            print(bucket)
             list_of_buckets.append(bucket)
 
         if not index_name in dict_name_create_statement:
