@@ -1,17 +1,50 @@
 import requests
 
-response = requests.get('http://localhost:9102/getIndexStatement', auth=('<USERNAME>', '<PASSWORD>'))
-path = '<PATH_TO_SAVE_FILE.txt>'
-text_file = open(path, "w")
+# list_of_nodes = ["localhost:9102", "localhost:9100", "localhost:9103"]
+list_of_nodes = ["localhost:9102"]
 
-for i in range(len(response.json())):
+dict_name_create_statement = {}
+list_of_buckets = []
 
-    line = response.json()[i]
-    line = line.replace("\\", "")
-    line = line.replace("_", "-")
-    line = line.replace("defer-build", "defer_build")
-    line = line + '\n'
+for node in list_of_nodes:
 
-    text_file.write(line)
+    response = requests.get('http://' + node + '/getIndexStatement', auth=('<USERNAME>', '<PASSWORD>'))
+
+    path = '<PATH_TO_SAVE_FILE.txt>'
+    text_file = open(path, "w")
+
+    print(response.json())
+
+    for i in range(len(response.json())):
+        line = response.json()[i]
+
+        index_INDEX_start = "INDEX"
+        index_ON_end = "ON"
+
+        index_name = line[line.find(index_INDEX_start) + len(index_INDEX_start):line.find(index_ON_end)].replace("`",
+                                                                                                                 "")
+        index_INDEX_start = "ON"
+        index_ON_end = "("
+        bucket = line[line.find(index_INDEX_start) + len(index_INDEX_start):line.find(index_ON_end)].replace(
+            "`", "")
+
+        if not bucket in list_of_buckets:
+            print(bucket)
+            list_of_buckets.append(bucket)
+
+        if not index_name in dict_name_create_statement:
+            line = line.replace("\\", "")
+            line = line.replace("_", "-")
+            line = line.replace("defer-build", "defer_build")
+
+            dict_name_create_statement[index_name] = line
+
+    for bucket in list_of_buckets:
+        bucket = bucket.strip()
+        dict_name_create_statement[
+            bucket] = "BUILD INDEX ON '" + bucket + "' ((SELECT RAW name FROM system:indexes WHERE keyspace_id = '" + bucket + "' AND state = 'deferred'))"
+
+    for value in dict_name_create_statement.values():
+        text_file.write(value + ';\n')
 
 text_file.close()
