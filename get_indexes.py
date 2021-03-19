@@ -73,9 +73,9 @@ for node in list_of_nodes:
         dict_name_create_statement[bucket] = (
             "BUILD INDEX ON `"
             + bucket
-            + "` ((SELECT RAW name FROM system:indexes WHERE keyspace_id = `"
+            + "` ((SELECT RAW name FROM system:indexes WHERE keyspace_id = '"
             + bucket
-            + "` AND state = 'deferred'))"
+            + "' AND state = 'deferred'))"
         )
 
     for value in dict_name_create_statement.values():
