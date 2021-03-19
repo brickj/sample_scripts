@@ -1,6 +1,5 @@
 # Quick Start
 
-- The purpose of this repository is to share small, practical, automation scripts.
 - Modify get_indexes.py file to include cluster nodes in the list_of_nodes.
 - Modify get_indexes.py path variable for the desired output path for the indexes.txt file.
 - Run get_indexes.py and execute the followind command using cbq eg:
