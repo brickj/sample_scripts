@@ -1,4 +1,4 @@
-# sample_scripts
+# Quick Start
 
 - The purpose of this repository is to share small, practical, automation scripts.
 - Modify get_indexes.py file to include cluster nodes in the list_of_nodes.
