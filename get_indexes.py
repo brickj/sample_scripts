@@ -31,10 +31,10 @@ def check_primary():
 for node in list_of_nodes:
 
     response = requests.get(
-        "http://" + node + "/getIndexStatement", auth=("admin", "password")
+        "http://" + node + "/getIndexStatement", auth=("<ADNIN>", "<PASSWORD>")
     )
 
-    path = "/Users/rickjacobs/Downloads/indexes.txt"
+    path = "<PATH_TO_FILE>/indexes.txt"
     text_file = open(path, "w")
 
     print(response.json())
