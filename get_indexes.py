@@ -4,8 +4,6 @@ import requests
 list_of_nodes = ["localhost:9102"]
 
 dict_name_create_statement = {}
-list_of_buckets = []
-bucket = str()
 
 for node in list_of_nodes:
 
@@ -23,20 +21,17 @@ for node in list_of_nodes:
         index_ON_end = "ON"
 
         index_name = line[
-            line.find(index_INDEX_start)
-            + len(index_INDEX_start) : line.find(index_ON_end)
-        ].replace("`", "")
+                     line.find(index_INDEX_start)
+                     + len(index_INDEX_start): line.find(index_ON_end)
+                     ].replace("`", "")
 
         if 'WITH {  "defer_build":true }' in line:
             index_INDEX_start = "ON"
             index_ON_end = "("
             bucket = line[
-                line.find(index_INDEX_start)
-                + len(index_INDEX_start) : line.find(index_ON_end)
-            ].replace("`", "")
-
-        if not bucket in list_of_buckets:
-            list_of_buckets.append(bucket)
+                     line.find(index_INDEX_start)
+                     + len(index_INDEX_start): line.find(index_ON_end)
+                     ].replace("`", "")
 
         if not index_name in dict_name_create_statement:
             line = line.replace("\\", "")
