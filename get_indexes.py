@@ -5,12 +5,12 @@ list_of_nodes = ["localhost:9102"]
 
 dict_name_create_statement = {}
 list_of_buckets = []
-
+bucket = str()
 
 for node in list_of_nodes:
 
     response = requests.get(
-        "http://" + node + "/getIndexStatement", auth=("<ADNIN>", "<PASSWORD>")
+        "http://" + node + "/getIndexStatement", auth=("<ADMIN>", "<PASSWORD>")
     )
 
     path = "<PATH_TO_FILE>/indexes.txt"
@@ -23,24 +23,17 @@ for node in list_of_nodes:
         index_ON_end = "ON"
 
         index_name = line[
-                     line.find(index_INDEX_start)
-                     + len(index_INDEX_start) : line.find(index_ON_end)
-                     ].replace("`", "")
+            line.find(index_INDEX_start)
+            + len(index_INDEX_start) : line.find(index_ON_end)
+        ].replace("`", "")
 
-        if not "CREATE PRIMARY INDEX" in line:
+        if 'WITH {  "defer_build":true }' in line:
             index_INDEX_start = "ON"
             index_ON_end = "("
             bucket = line[
-                     line.find(index_INDEX_start)
-                     + len(index_INDEX_start) : line.find(index_ON_end)
-                     ].replace("`", "")
-
-        if "INDEX `#primary`" in line:
-            index_INDEX_start = "ON"
-            index_ON_end = "("
-            bucket = line[
-                     line.find(index_INDEX_start) + len(index_INDEX_start) : len(line)
-                     ].replace("`", "")
+                line.find(index_INDEX_start)
+                + len(index_INDEX_start) : line.find(index_ON_end)
+            ].replace("`", "")
 
         if not bucket in list_of_buckets:
             list_of_buckets.append(bucket)
@@ -50,18 +43,10 @@ for node in list_of_nodes:
             line = line.replace("_", "-")
             line = line.replace("defer-build", "defer_build")
 
+            if 'WITH {  "defer_build":true }' in line:
+                line = line.replace('WITH {  "defer_build":true }', "")
+
             dict_name_create_statement[index_name] = line
-
-    for bucket in list_of_buckets:
-        bucket = bucket.strip()
-
-        dict_name_create_statement[bucket] = (
-                "BUILD INDEX ON `"
-                + bucket
-                + "` ((SELECT RAW name FROM system:indexes WHERE keyspace_id = '"
-                + bucket
-                + "' AND state = 'deferred'))"
-        )
 
     for value in dict_name_create_statement.values():
         text_file.write(value + ";\n")
